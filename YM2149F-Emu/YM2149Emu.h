@@ -161,6 +161,8 @@ public:
 	YM2149EmuMonoSource() = default;
 	virtual ~YM2149EmuMonoSource() = default;
 
+	void write(int reg, int val) { _ym.write(reg, val); }
+
 	virtual void advance();
 	virtual double sample() const;
 };
