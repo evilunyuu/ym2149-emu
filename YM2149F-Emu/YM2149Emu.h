@@ -132,7 +132,38 @@ public:
 	}
 };
 
+class YM2149Emu
+{
+protected:
+	YM2149_Tone _tone[3];
+	YM2149_Noise _noise;
+	YM2149_Envelope _env;
+	int _mixer { 0x3f };
+	int _level[3] { 0, 0, 0 };
 
+	double sample_ch(int ch) const;
+public:
+	YM2149Emu() = default;
+
+	void write(int reg, int val);
+	void advance(int cycles);
+	double sample_a() const;
+	double sample_b() const;
+	double sample_c() const;
+};
+
+class YM2149EmuMonoSource: public SoundSource
+{
+protected:
+	YM2149Emu _ym;
+	double _clock_error { 0. };
+public:
+	YM2149EmuMonoSource() = default;
+	virtual ~YM2149EmuMonoSource() = default;
+
+	virtual void advance();
+	virtual double sample() const;
+};
 
 
 #endif /* YM2149EMU_H_ */
