@@ -52,6 +52,43 @@ public:
 	}
 };
 
+class YM2149_Envelope
+{
+protected:
+	enum class State { NORM, INV, HOLD };
+
+	int _output { 0 };
+	int _cycle_counter { 0 };
+	int _period { 0 };
+	int _period_counter { 0 };
+	int _mode { 0 };
+	State _state { State::NORM };
+
+	void reset();
+	bool cont() const { return _mode & 8; }
+	bool att() const  { return _mode & 4; }
+	bool alt() const  { return _mode & 2; }
+	bool hold() const { return _mode & 1; }
+public:
+	YM2149_Envelope() = default;
+
+	void advance(int cycles);
+	int output() const { return _output; }
+
+	void set_period_hi(int v) {
+		_period = (_period & 0x00ff) | ((v & 0x00ff) << 8);
+	}
+	void set_period_lo(int v) {
+		_period = (_period & 0xff00) | v;
+	}
+	void set_mode(int v) {
+		_mode = v & 0x0f;
+		reset();
+	}
+};
+
+
+
 class YM2149_Noise_Tester: public SoundSource
 {
 protected:
@@ -94,6 +131,8 @@ public:
 		_noise.set_period_lo(per & 0xff);
 	}
 };
+
+
 
 
 #endif /* YM2149EMU_H_ */
